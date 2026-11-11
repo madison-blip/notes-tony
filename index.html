@@ -213,6 +213,136 @@
     .btn-yes:hover { background: var(--blue-hover); border-color: var(--blue-hover); }
     .btn-yes:active { background: var(--blue-active); border-color: var(--blue-active); }
 
+    .send-panel {
+      margin-top: 0.15rem;
+      padding: 0.85rem 0.85rem 0.95rem;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 0.85rem;
+      box-shadow: 0 8px 24px rgba(28, 25, 22, 0.06);
+    }
+
+    .send-panel[hidden] { display: none !important; }
+
+    .send-panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin: 0 0 0.75rem;
+    }
+
+    .send-panel-title {
+      margin: 0;
+      font-size: 0.98rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1.35;
+      color: var(--ink);
+    }
+
+    .send-close {
+      flex: 0 0 auto;
+      width: 2rem;
+      height: 2rem;
+      margin: -0.2rem -0.15rem 0 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0.45rem;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 1.25rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .send-close:hover { background: rgba(28, 25, 22, 0.05); color: var(--ink); }
+
+    .send-close:focus-visible,
+    .send-choice:focus-visible,
+    .send-copy:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .send-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .send-choice {
+      display: block;
+      width: 100%;
+      min-height: 2.75rem;
+      padding: 0.72rem 0.85rem;
+      border-radius: 0.7rem;
+      border: 1.5px solid #2C2824;
+      background: transparent;
+      color: var(--ink);
+      font: inherit;
+      font-size: 0.98rem;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .send-choice:hover { background: rgba(28, 25, 22, 0.04); }
+
+    .send-choice-primary {
+      color: #fff;
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .send-choice-primary:hover { background: var(--blue-hover); border-color: var(--blue-hover); }
+    .send-choice-primary:active { background: var(--blue-active); border-color: var(--blue-active); }
+
+    .send-fallback {
+      margin: 0.85rem 0 0;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .send-address-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+    }
+
+    .send-email {
+      color: var(--ink);
+      font-size: 0.92rem;
+      font-weight: 600;
+      line-height: 1.35;
+      word-break: break-all;
+    }
+
+    .send-copy {
+      flex: 0 0 auto;
+      min-height: 2rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 0.5rem;
+      border: 1.5px solid #2C2824;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .send-copy:hover { background: rgba(28, 25, 22, 0.04); }
+
+    .send-subject {
+      margin: 0.45rem 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.4;
+    }
+
     .footer {
       margin: 0;
       text-align: center;
@@ -276,6 +406,24 @@
       -->
       <a class="btn btn-pass" id="pass-btn" href="mailto:madison@mbwservice.com?subject=Pass%20on%20Tony%20intro">Pass</a>
       <a class="btn btn-yes" id="yes-btn" href="mailto:madison@mbwservice.com?subject=Yes%2C%20introduce%20me%20to%20Tony&amp;body=Hi%20Madison%2C%20yes%2C%20I'd%20like%20to%20meet%20Tony.%20What%20I'd%20want%20to%20talk%20about%3A%20">Yes, introduce us</a>
+      <div id="send-panel" class="send-panel" role="dialog" aria-labelledby="send-panel-title" aria-modal="false" hidden>
+        <div class="send-panel-head">
+          <h2 id="send-panel-title" class="send-panel-title">Send your yes to Madison</h2>
+          <button type="button" class="send-close" id="send-close" aria-label="Close">×</button>
+        </div>
+        <div class="send-choices">
+          <button type="button" class="send-choice send-choice-primary" id="gmail-btn">Open in Gmail</button>
+          <button type="button" class="send-choice" id="outlook-btn">Open in Outlook</button>
+          <button type="button" class="send-choice" id="app-btn">Use my email app</button>
+        </div>
+        <div class="send-fallback">
+          <div class="send-address-row">
+            <span class="send-email" id="send-email">madison@mbwservice.com</span>
+            <button type="button" class="send-copy" id="copy-btn" aria-live="polite">Copy</button>
+          </div>
+          <p class="send-subject" id="send-subject">Subject: Yes, introduce me to Tony</p>
+        </div>
+      </div>
     </div>
 
     <p class="footer"><a href="https://eip360.com/" target="_blank" rel="noopener noreferrer">eip360.com</a></p>
@@ -331,6 +479,142 @@
       + '&body=' + encodeURIComponent(yesBody);
     passBtn.href = 'mailto:' + CONTACT_EMAIL
       + '?subject=' + encodeURIComponent(passSubject);
+
+    var panel = document.getElementById('send-panel');
+    var panelTitle = document.getElementById('send-panel-title');
+    var gmailBtn = document.getElementById('gmail-btn');
+    var outlookBtn = document.getElementById('outlook-btn');
+    var appBtn = document.getElementById('app-btn');
+    var copyBtn = document.getElementById('copy-btn');
+    var emailLine = document.getElementById('send-email');
+    var subjectLine = document.getElementById('send-subject');
+    var closeBtn = document.getElementById('send-close');
+    var openKind = '';
+    var returnFocus = null;
+    var copiedTimer = null;
+
+    emailLine.textContent = CONTACT_EMAIL;
+
+    function composeLinks(subject, body, mailto) {
+      var to = encodeURIComponent(CONTACT_EMAIL);
+      var encodedSubject = encodeURIComponent(subject);
+      var encodedBody = encodeURIComponent(body);
+      gmailBtn.dataset.href = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + to
+        + '&su=' + encodedSubject
+        + '&body=' + encodedBody;
+      outlookBtn.dataset.href = 'https://outlook.office.com/mail/deeplink/compose?to=' + to
+        + '&subject=' + encodedSubject
+        + '&body=' + encodedBody;
+      appBtn.dataset.href = mailto;
+      subjectLine.textContent = 'Subject: ' + subject;
+    }
+
+    function openPanel(kind, trigger) {
+      var subject = kind === 'yes' ? yesSubject : passSubject;
+      var body = kind === 'yes' ? yesBody : '';
+      var mailto = kind === 'yes' ? yesBtn.href : passBtn.href;
+      composeLinks(subject, body, mailto);
+      panelTitle.textContent = kind === 'yes'
+        ? 'Send your yes to Madison'
+        : "Let Madison know you'll pass";
+      emailLine.textContent = CONTACT_EMAIL;
+      copyBtn.textContent = 'Copy';
+      openKind = kind;
+      yesBtn.setAttribute('aria-expanded', kind === 'yes' ? 'true' : 'false');
+      passBtn.setAttribute('aria-expanded', kind === 'pass' ? 'true' : 'false');
+      panel.hidden = false;
+      returnFocus = trigger;
+      closeBtn.focus();
+    }
+
+    function closePanel() {
+      if (panel.hidden) return;
+      panel.hidden = true;
+      openKind = '';
+      yesBtn.setAttribute('aria-expanded', 'false');
+      passBtn.setAttribute('aria-expanded', 'false');
+      if (returnFocus && returnFocus.focus) returnFocus.focus();
+    }
+
+    function onTriggerClick(kind, event) {
+      event.preventDefault();
+      if (!panel.hidden && openKind === kind) {
+        closePanel();
+        return;
+      }
+      openPanel(kind, event.currentTarget);
+    }
+
+    yesBtn.setAttribute('aria-expanded', 'false');
+    yesBtn.setAttribute('aria-controls', 'send-panel');
+    yesBtn.setAttribute('aria-haspopup', 'dialog');
+    passBtn.setAttribute('aria-expanded', 'false');
+    passBtn.setAttribute('aria-controls', 'send-panel');
+    passBtn.setAttribute('aria-haspopup', 'dialog');
+
+    yesBtn.addEventListener('click', function (event) { onTriggerClick('yes', event); });
+    passBtn.addEventListener('click', function (event) { onTriggerClick('pass', event); });
+
+    function openExternal(url) {
+      var opened = window.open(url, '_blank', 'noopener,noreferrer');
+      if (opened) opened.opener = null;
+    }
+
+    gmailBtn.addEventListener('click', function () { openExternal(gmailBtn.dataset.href); });
+    outlookBtn.addEventListener('click', function () { openExternal(outlookBtn.dataset.href); });
+    appBtn.addEventListener('click', function () { window.location.href = appBtn.dataset.href; });
+    closeBtn.addEventListener('click', closePanel);
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !panel.hidden) {
+        event.preventDefault();
+        closePanel();
+      }
+    });
+
+    function fallbackCopy(text) {
+      var area = document.createElement('textarea');
+      area.value = text;
+      area.setAttribute('readonly', '');
+      area.style.position = 'fixed';
+      area.style.top = '0';
+      area.style.left = '0';
+      area.style.width = '1px';
+      area.style.height = '1px';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.focus();
+      area.select();
+      var ok = false;
+      try {
+        ok = document.execCommand('copy');
+      } catch (err) {
+        ok = false;
+      }
+      document.body.removeChild(area);
+      return ok;
+    }
+
+    function markCopied() {
+      copyBtn.textContent = 'Copied';
+      if (copiedTimer) clearTimeout(copiedTimer);
+      copiedTimer = setTimeout(function () {
+        copyBtn.textContent = 'Copy';
+      }, 1600);
+    }
+
+    copyBtn.addEventListener('click', function () {
+      var text = CONTACT_EMAIL;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(markCopied).catch(function () {
+          if (fallbackCopy(text)) markCopied();
+        });
+        return;
+      }
+      if (fallbackCopy(text)) markCopied();
+    });
+
+    composeLinks(yesSubject, yesBody, yesBtn.href);
   </script>
 </body>
 </html>
